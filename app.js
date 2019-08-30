@@ -26,6 +26,7 @@ app.use('/feed', feedRoutes);
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
+    console.log("works!")
     app.listen(8080);
   })
   .catch(err => console.log(err));
