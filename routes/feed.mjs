@@ -5,7 +5,7 @@ import filterAPIs from "express-validator";
 const { body } = checkAPIs;
 const { matchedData } = filterAPIs;
 
-import { getPosts, getPost, createPost } from "../controllers/feed";
+import { getPosts, getPost, createPost, updatePost } from "../controllers/feed";
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.post(
   [
     body("title")
       .trim()
-      .isLength({ min: 7 }),
+      .isLength({ min: 5 }),
     body("content")
       .trim()
       .isLength({ min: 5 })
@@ -27,5 +27,14 @@ router.post(
 );
 
 router.get("/post/:postId", getPost);
+
+router.put("/post/:postId",   [
+    body("title")
+      .trim()
+      .isLength({ min: 5 }),
+    body("content")
+      .trim()
+      .isLength({ min: 5 })
+  ], updatePost);
 
 export default router;

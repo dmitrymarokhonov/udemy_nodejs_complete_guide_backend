@@ -1,5 +1,4 @@
-import path from "path";
-import { dirname } from "path";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 import bodyParser from "body-parser";
@@ -9,7 +8,7 @@ import multer from "multer";
 import feedRoutes from "./routes/feed.mjs";
 
 const app = express();
-const __dirname = dirname(fileURLToPath(import.meta.url));
+export const __dirname = dirname(fileURLToPath(import.meta.url));
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");

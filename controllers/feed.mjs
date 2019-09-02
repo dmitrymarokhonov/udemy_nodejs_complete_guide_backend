@@ -1,9 +1,12 @@
-import checkAPIs from 'express-validator';
-import filterAPIs from 'express-validator';
+import fs from "fs";
+import path from "path";
+import checkAPIs from "express-validator";
+import filterAPIs from "express-validator";
 
 const { check, validationResult } = checkAPIs;
 const { matchedData } = filterAPIs;
 import Post from "../models/post";
+import {__dirname} from "../app"; 
 
 export const getPosts = (req, res, next) => {
   Post.find()
@@ -27,14 +30,14 @@ export const createPost = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  if(!req.file) {
+  if (!req.file) {
     const error = new Error("No image provided.");
     error.statusCode = 422;
     throw error;
   }
   const title = req.body.title;
   const content = req.body.content;
-  const imageUrl = req.file.path
+  const imageUrl = req.file.path;
   const post = new Post({
     title: title,
     content: content,
@@ -75,5 +78,62 @@ export const getPost = (req, res, next) => {
       next(err);
     });
 };
+
+export const updatePost = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed, enetered data is incorrect.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  const postId = req.params.postId;
+  const title = req.body.title;
+  const content = req.body.content;
+  let imageUrl = req.body.image;
+
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
+  if (!imageUrl) {
+    const error = new Error("No file path found.");
+    error.statusCode = 422;
+    throw error;
+  }
+  console.log(req.params.postId);
+  Post.findById(postId)
+    .then(post => {
+      if (!post) {
+        const error = new Error("Could not find post.");
+        error.statusCode = 404;
+        throw error;
+      }
+
+      if(imageUrl !== post.imageUrl) {
+        clearImage(post.imageUrl);
+      }
+      post.title = title;
+      post.content = content;
+      post.imageUrl = imageUrl;
+
+      return post.save();
+    })
+    .then(result => {
+      return res.status(200).json({ message: "Post updated!", post: result });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+const clearImage = filePath => {
+  filePath = path.join(__dirname, filePath);
+  fs.unlink(filePath, err => console.log(err));
+
+}
 
 export default getPosts;
