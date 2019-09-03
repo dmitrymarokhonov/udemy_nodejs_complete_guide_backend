@@ -4,7 +4,7 @@ import checkAPIs from "express-validator";
 const { body } = checkAPIs;
 
 import User from "../models/user";
-import { signup } from "../controllers/auth";
+import { signup, login } from "../controllers/auth";
 
 const router = express.Router();
 
@@ -28,5 +28,7 @@ router.put("/signup", [
     .not()
     .isEmpty()
 ], signup);
+
+router.post("/login", login)
 
 export default router;
