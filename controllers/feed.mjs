@@ -6,7 +6,7 @@ import filterAPIs from "express-validator";
 const { check, validationResult } = checkAPIs;
 const { matchedData } = filterAPIs;
 import Post from "../models/post";
-import {__dirname} from "../app"; 
+import { __dirname } from "../app";
 
 export const getPosts = (req, res, next) => {
   Post.find()
@@ -110,7 +110,7 @@ export const updatePost = (req, res, next) => {
         throw error;
       }
 
-      if(imageUrl !== post.imageUrl) {
+      if (imageUrl !== post.imageUrl) {
         clearImage(post.imageUrl);
       }
       post.title = title;
@@ -130,10 +130,34 @@ export const updatePost = (req, res, next) => {
     });
 };
 
+export const deletePost = (req, res, next) => {
+  const postId = req.params.postId;
+
+  Post.findById(postId)
+    .then(post => {
+      if(!post) {
+        const error = new Error("Could not find a post.")
+        error.statusCode = 404;
+        throw error;
+      }
+      // Check logged in user here
+      clearImage(post.imageUrl);
+      return Post.findByIdAndRemove(postId);
+    }).then(result => {
+      console.log(result)
+      res.status(200).json({message: "Deleted post."})
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
 const clearImage = filePath => {
   filePath = path.join(__dirname, filePath);
   fs.unlink(filePath, err => console.log(err));
-
-}
+};
 
 export default getPosts;
