@@ -2,6 +2,7 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 import bodyParser from "body-parser";
+import cors from "cors"
 import mongoose from "mongoose";
 import multer from "multer";
 
@@ -32,6 +33,7 @@ const fileFilter = (req, file, cb) => {
 const MONGODB_URI =
   "mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/messages";
 
+app.use(cors())
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single("image"))
@@ -49,7 +51,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/feed", feedRoutes);
-app.use("/feed", authRoutes);
+app.use("/auth", authRoutes);
 
 // Will be executed whenever error is thrown or forwarded with next()
 app.use((error, req, res, next) => {
