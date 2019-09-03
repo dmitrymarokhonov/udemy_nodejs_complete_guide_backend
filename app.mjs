@@ -5,7 +5,8 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import multer from "multer";
 
-import feedRoutes from "./routes/feed.mjs";
+import feedRoutes from "./routes/feed";
+import authRoutes from "./routes/auth"
 
 const app = express();
 export const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -48,8 +49,9 @@ app.use((req, res, next) => {
 });
 
 app.use("/feed", feedRoutes);
+app.use("/feed", authRoutes);
 
-// Will be exexuted whenever error is thrown or forwarded with next()
+// Will be executed whenever error is thrown or forwarded with next()
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
