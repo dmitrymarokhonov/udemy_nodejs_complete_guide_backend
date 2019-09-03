@@ -22,13 +22,11 @@ export const getPosts = (req, res, next) => {
         .limit(perPage);
     })
     .then(posts => {
-      res
-        .status(200)
-        .json({
-          message: "Fetched posts successfully.",
-          posts: posts,
-          totalItems: totalItems
-        });
+      res.status(200).json({
+        message: "Fetched posts successfully.",
+        posts: posts,
+        totalItems: totalItems
+      });
     })
     .catch(err => {
       if (!err.statusCode) {

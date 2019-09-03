@@ -1,9 +1,7 @@
 import express from "express";
 import checkAPIs from "express-validator";
-import filterAPIs from "express-validator";
 
 const { body } = checkAPIs;
-const { matchedData } = filterAPIs;
 
 import {
   getPosts,
