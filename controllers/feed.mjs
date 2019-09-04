@@ -6,6 +6,7 @@ import filterAPIs from "express-validator";
 const { check, validationResult } = checkAPIs;
 const { matchedData } = filterAPIs;
 import Post from "../models/post";
+import User from "../models/user";
 import { __dirname } from "../app";
 
 export const getPosts = (req, res, next) => {
@@ -48,21 +49,38 @@ export const createPost = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
+  let userIdParsed = req.userId;
+  userIdParsed = userIdParsed.userId;
+  if(!userIdParsed) {
+    const error = new Error("UserId in request missing.");
+    error.statusCode = 422;
+    throw error;
+  }
   const title = req.body.title;
   const content = req.body.content;
   const imageUrl = req.file.path;
+  let creator;
   const post = new Post({
     title: title,
     content: content,
     imageUrl: imageUrl,
-    creator: { name: "Dmitry Marokhonov" }
+    creator: userIdParsed
   });
   post
     .save()
     .then(result => {
+      return User.findById(userIdParsed);
+    })
+    .then(user => {
+      creator = user;
+      user.posts.push(post);
+      return user.save();
+    })
+    .then(result => {
       res.status(201).json({
         message: "Post created successfully!",
-        post: result
+        post: post,
+        creator: { _id: creator._id, name: creator.name }
       });
     })
     .catch(err => {
