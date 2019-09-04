@@ -1,5 +1,6 @@
 import express from "express";
 import checkAPIs from "express-validator";
+import isAuth from "../middleware/is-auth"
 
 const { body } = checkAPIs;
 
@@ -14,7 +15,7 @@ import {
 const router = express.Router();
 
 // GET /feed/posts
-router.get("/posts", getPosts);
+router.get("/posts", isAuth, getPosts);
 
 // POST /feed/post
 router.post(

@@ -5,6 +5,8 @@ import jsonWebToken from "jsonwebtoken";
 const { check, validationResult } = checkAPIs;
 import User from "../models/user";
 
+export const jwtTokenSecret = "YHDs~44N:?!bLzH5"
+
 export const signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -64,7 +66,7 @@ export const login = (req, res, next) => {
           email: loadedUser.email,
           userId: loadedUser._id.toString()
         },
-        "YHDs~44N:?!bLzH5",
+        jwtTokenSecret,
         { expiresIn: "1h" }
       );
       console.log(token);
