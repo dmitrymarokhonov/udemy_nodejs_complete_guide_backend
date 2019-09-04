@@ -51,7 +51,7 @@ export const createPost = (req, res, next) => {
   }
   let userIdParsed = req.userId;
   userIdParsed = userIdParsed.userId;
-  if(!userIdParsed) {
+  if (!userIdParsed) {
     const error = new Error("UserId in request missing.");
     error.statusCode = 422;
     throw error;
@@ -140,8 +140,8 @@ export const updatePost = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      if(post.creator.toString() !== req.userId.userId) {
-        const error = new Error("Not authorized")
+      if (post.creator.toString() !== req.userId.userId) {
+        const error = new Error("Not authorized");
         error.statusCode = 403;
         throw error;
       }
@@ -177,13 +177,20 @@ export const deletePost = (req, res, next) => {
         throw error;
       }
       // Check logged in user here
-      if(post.creator.toString() !== req.userId.userId) {
-        const error = new Error("Not authorized")
+      if (post.creator.toString() !== req.userId.userId) {
+        const error = new Error("Not authorized");
         error.statusCode = 403;
         throw error;
       }
       clearImage(post.imageUrl);
       return Post.findByIdAndRemove(postId);
+    })
+    .then(result => {
+      return User.findById(req.userId.userId);
+    })
+    .then(user => {
+      user.posts.pull(postId);
+      return user.save();
     })
     .then(result => {
       console.log(result);
