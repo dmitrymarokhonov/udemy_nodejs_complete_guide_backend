@@ -17,7 +17,7 @@ export default function isAuth(req, res, next) {
     throw err;
   }
   if (!decodedToken) {
-    const error = new Error("Not authenticated.");
+        const error = new Error("Not authenticated.");
     error.statusCode = 401;
     throw error;
   }

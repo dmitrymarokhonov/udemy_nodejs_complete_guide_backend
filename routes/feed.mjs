@@ -1,6 +1,6 @@
 import express from "express";
 import checkAPIs from "express-validator";
-import isAuth from "../middleware/is-auth"
+import isAuth from "../middleware/is-auth";
 
 const { body } = checkAPIs;
 
@@ -20,6 +20,7 @@ router.get("/posts", isAuth, getPosts);
 // POST /feed/post
 router.post(
   "/post",
+  isAuth,
   [
     body("title")
       .trim()
@@ -31,10 +32,11 @@ router.post(
   createPost
 );
 
-router.get("/post/:postId", getPost);
+router.get("/post/:postId", isAuth, getPost);
 
 router.put(
   "/post/:postId",
+  isAuth,
   [
     body("title")
       .trim()
@@ -46,6 +48,6 @@ router.put(
   updatePost
 );
 
-router.delete("/post/:postId", deletePost);
+router.delete("/post/:postId", isAuth, deletePost);
 
 export default router;
