@@ -5,7 +5,7 @@ import jsonWebToken from "jsonwebtoken";
 const { check, validationResult } = checkAPIs;
 import User from "../models/user";
 
-export const jwtTokenSecret = "YHDs~44N:?!bLzH5"
+export const jwtTokenSecret = "YHDs~44N:?!bLzH5";
 
 export const signup = (req, res, next) => {
   const errors = validationResult(req);
@@ -55,7 +55,7 @@ export const login = (req, res, next) => {
       return bcrypt.compare(password, user.password);
     })
     .then(isEqual => {
-        console.log("isEqual = " + isEqual);
+      console.log("isEqual = " + isEqual);
       if (!isEqual) {
         const error = new Error("Wrong password!");
         error.statusCode = 401;
@@ -71,6 +71,47 @@ export const login = (req, res, next) => {
       );
       console.log(token);
       res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next();
+    });
+};
+
+export const getUserStatus = (req, res, next) => {
+  User.findById(req.userId.userId)
+    .then(user => {
+      if (!user) {
+        const error = new Error("Use not found.");
+        error.statusCode = 404;
+        throw error;
+      }
+      res.status(200).json({ status: user.status });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next();
+    });
+};
+
+export const updateUserStatus = (req, res, next) => {
+  const newStatus = req.body.status;
+  User.findById(req.userId.userId)
+    .then(user => {
+      if (!user) {
+        const error = new Error("Use not found.");
+        error.statusCode = 404;
+        throw error;
+      }
+      user.status = newStatus;
+      return user.save();
+    })
+    .then(result => {
+      res.status(200).json({message: "User updated."});
     })
     .catch(err => {
       if (!err.statusCode) {
