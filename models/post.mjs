@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+
+const { Schema } = mongoose;
 
 const postSchema = new Schema(
   {
@@ -17,11 +18,11 @@ const postSchema = new Schema(
     },
     creator: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true
     }
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Post", postSchema);
+export default mongoose.model('Post', postSchema);

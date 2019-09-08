@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import cors from "cors"
 import mongoose from "mongoose";
 import multer from "multer";
+import cookieParser from "cookie-parser";
 
 import feedRoutes from "./routes/feed";
 import authRoutes from "./routes/auth"
@@ -34,6 +35,7 @@ const MONGODB_URI =
   "mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/messages";
 
 app.use(cors())
+app.use(cookieParser('some_secret_1234'));
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
 app.use(bodyParser.json()); // application/json
 app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single("image"))

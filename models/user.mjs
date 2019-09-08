@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
   email: {
@@ -16,14 +17,14 @@ const userSchema = new Schema({
   },
   status: {
     type: String,
-    default: "I am new!"
+    default: 'I am new!'
   },
   posts: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Post"
+      ref: 'Post'
     }
   ]
 });
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model('User', userSchema);
