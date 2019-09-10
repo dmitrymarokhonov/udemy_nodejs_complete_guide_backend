@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { validationResult } = require('express-validator');
+
+const io = require('../socket');
 const Post = require('../models/post');
 const User = require('../models/user');
 
@@ -23,7 +25,7 @@ exports.getPosts = async (req, res, next) => {
     res.status(200).json({
       message: 'Fetched posts successfully.',
       posts,
-      totalItems,
+      totalItems
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -53,7 +55,7 @@ exports.createPost = async (req, res, next) => {
     title,
     content,
     imageUrl,
-    creator: req.userId.userId,
+    creator: req.userId.userId
   });
 
   try {
@@ -61,11 +63,21 @@ exports.createPost = async (req, res, next) => {
     const creator = await User.findById(req.userId.userId);
     await creator.posts.push(post);
     await creator.save();
+    io.getIo().emit('posts', {
+      action: 'create',
+      post: {
+        ...post._doc,
+        creator: {
+          _id: req.userId,
+          name: creator.name
+        }
+      }
+    });
 
     res.status(201).json({
       message: 'Post created successfully!',
       post,
-      creator: { _id: creator._id, name: creator.name },
+      creator: { _id: creator._id, name: creator.name }
     });
   } catch (err) {
     if (!err.statusCode) {

@@ -2,7 +2,7 @@ let io;
 
 module.exports = {
   init: (httpServer) => {
-    require('socket.io')(httpServer);
+    io = require('socket.io')(httpServer);
     return io;
   },
   getIo: () => {
