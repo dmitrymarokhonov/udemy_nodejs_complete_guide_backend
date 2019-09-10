@@ -180,8 +180,9 @@ exports.deletePost = async (req, res, next) => {
     await Post.findByIdAndRemove(postId);
     const updatedUser = await User.findById(req.userId.userId);
     updatedUser.posts.pull(postId);
-    const result = await updatedUser.save();
-    console.log(result);
+    await updatedUser.save();
+    io.getIo().emit('posts', { action: 'delete', post: postId });
+
 
     res.status(200).json({ message: 'Deleted post.' });
   } catch (err) {
