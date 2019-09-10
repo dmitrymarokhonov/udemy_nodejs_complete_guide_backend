@@ -1,7 +1,8 @@
-import jwt from 'jsonwebtoken';
-import { jwtTokenSecret } from '../controllers/auth';
+const jwt = require('jsonwebtoken');
 
-export default function isAuth(req, res, next) {
+const { jwtTokenSecret } = require('../controllers/auth');
+
+module.exports = (req, res, next) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {
     const error = new Error('Not authenticated.');
@@ -23,4 +24,4 @@ export default function isAuth(req, res, next) {
   }
   req.userId = decodedToken;
   next();
-}
+};

@@ -2,10 +2,10 @@
   "name": "rest_testing",
   "version": "1.0.0",
   "description": "Udemy NodeJS course, REST API requests basics + CORS errors",
-  "main": "index.mjs",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --experimental-modules app.mjs"
+    "dev": "nodemon app.js"
   },
   "author": "Dmitry Marokhonov",
   "license": "ISC",
@@ -18,7 +18,8 @@
     "express-validator": "^6.1.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.6.11",
-    "multer": "^1.4.2"
+    "multer": "^1.4.2",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "eslint": "^6.3.0",

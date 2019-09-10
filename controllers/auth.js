@@ -1,14 +1,11 @@
-/* eslint-disable no-underscore-dangle */
-import checkAPIs from 'express-validator';
-import bcrypt from 'bcryptjs';
-import jsonWebToken from 'jsonwebtoken';
-import User from '../models/user';
+const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jsonWebToken = require('jsonwebtoken');
+const User = require('../models/user');
 
-const { validationResult } = checkAPIs;
+exports.jwtTokenSecret = 'YHDs~44N:?!bLzH5';
 
-export const jwtTokenSecret = 'YHDs~44N:?!bLzH5';
-
-export const signup = async (req, res, next) => {
+exports.signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed.');
@@ -37,7 +34,7 @@ export const signup = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res, next) => {
+exports.login = async (req, res, next) => {
   const { email } = req.body;
   const { password } = req.body;
   try {
@@ -57,7 +54,7 @@ export const login = async (req, res, next) => {
         email: loadedUser.email,
         userId: loadedUser._id.toString()
       },
-      jwtTokenSecret,
+      this.jwtTokenSecret,
       { expiresIn: '1h' }
     );
 
@@ -71,7 +68,7 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const getUserStatus = async (req, res, next) => {
+exports.getUserStatus = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId.userId);
     if (!user) {
@@ -88,7 +85,7 @@ export const getUserStatus = async (req, res, next) => {
   }
 };
 
-export const updateUserStatus = async (req, res, next) => {
+exports.updateUserStatus = async (req, res, next) => {
   const newStatus = req.body.status;
   try {
     const user = await User.findById(req.userId.userId);
