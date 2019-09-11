@@ -4,9 +4,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const graphqlHttp = require('express-graphql');
+
 const cookieParser = require('cookie-parser');
-const feedRoutes = require('./routes/feed');
-const authRoutes = require('./routes/auth');
+
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolver = require('./graphql/resolvers');
 
 const app = express();
 
@@ -46,8 +49,12 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
-app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
+
+app.use('/graphql', graphqlHttp({
+  schema: graphqlSchema,
+  rootValue: graphqlResolver
+}));
+
 // Will be executed whenever error is thrown or forwarded with next()
 app.use((error, req, res, next) => {
   console.log(error);
@@ -59,11 +66,7 @@ app.use((error, req, res, next) => {
 
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
+    app.listen(8080);
     console.log('works!');
-    const server = app.listen(8080);
-    const io = require('./socket').init(server);
-    io.on('connection', (socket) => {
-      console.log('Client connected');
-    });
   })
   .catch((err) => console.log(err));
