@@ -52,7 +52,8 @@ app.use((req, res, next) => {
 
 app.use('/graphql', graphqlHttp({
   schema: graphqlSchema,
-  rootValue: graphqlResolver
+  rootValue: graphqlResolver,
+  graphiql: true
 }));
 
 // Will be executed whenever error is thrown or forwarded with next()
