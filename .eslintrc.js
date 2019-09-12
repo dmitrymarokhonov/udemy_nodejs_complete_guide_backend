@@ -20,6 +20,10 @@ module.exports = {
     "no-console": "off",
     "no-unused-vars": "off",
     "global-require": "off",
-    "comma-dangle": "off"
+    "comma-dangle": "off",
+    "no-undef": "off"
   },
+  plugins: [
+    "mocha"
+  ]
 };

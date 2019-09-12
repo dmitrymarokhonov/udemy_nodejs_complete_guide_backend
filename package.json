@@ -4,7 +4,7 @@
   "description": "Udemy NodeJS course, REST API requests basics + CORS errors",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "dev": "nodemon app.js"
   },
   "author": "Dmitry Marokhonov",
@@ -21,13 +21,16 @@
     "multer": "^1.4.2"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^6.3.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.2.0",
     "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-mocha": "^6.1.1",
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-promise": "^4.2.1",
+    "mocha": "^6.2.0",
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2"
   }
