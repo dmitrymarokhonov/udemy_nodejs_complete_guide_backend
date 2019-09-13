@@ -62,13 +62,19 @@ module.exports = {
         userId: user._id.toString(),
         email: user.email
       },
-      'somesecretsomesecret',
+      process.conf.jwtSecret,
       { expiresIn: '1h' }
     );
     return { token, userId: user._id.toString() };
   },
   async createPost({ postInput }, req) {
     const errors = [];
+
+    if (!req.Auth) {
+      const error = new Error('Not authenticated!');
+      error.code = 401;
+      throw error;
+    }
     if (
       validator.isEmpty(postInput.title)
       || !validator.isLength(postInput.title, { min: 5 })
@@ -82,13 +88,21 @@ module.exports = {
       throw error;
     }
 
+    const user = await User.findById(req.userId);
+    if (!user) {
+      const error = new Error('Invalid user');
+      error.code = 401;
+      throw error;
+    }
     const post = new Post({
       title: postInput.title,
       content: postInput.content,
-      imageUrl: postInput.imageUrl
+      imageUrl: postInput.imageUrl,
+      creator: user
     });
     const createdPost = await post.save();
     // Add post to user's posts
+    user.posts.push(createdPost);
     return {
       ...createdPost._doc,
       _id: createdPost._id.toString(),

@@ -3,8 +3,6 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 
-exports.jwtTokenSecret = 'YHDs~44N:?!bLzH5';
-
 exports.signup = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -54,7 +52,7 @@ exports.login = async (req, res, next) => {
         email: loadedUser.email,
         userId: loadedUser._id.toString()
       },
-      this.jwtTokenSecret,
+      process.conf.jwtSecret,
       { expiresIn: '1h' }
     );
 
