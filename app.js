@@ -13,7 +13,8 @@ const graphqlResolver = require('./graphql/resolvers');
 const auth = require('./middleware/auth');
 
 process.conf = {
-  jwtSecret: 'YHDs~44N:?!bLzH5'
+  jwtSecret: 'YHDs~44N:?!bLzH5',
+  mongoServer: 'mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/messages'
 };
 
 const app = express();
@@ -37,8 +38,6 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
-
-const MONGODB_URI = 'mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/messages';
 
 app.use(cors());
 app.use(cookieParser('some_secret_1234'));
@@ -88,7 +87,7 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message, data });
 });
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
+mongoose.connect(process.conf.mongoServer, { useNewUrlParser: true })
   .then(() => {
     app.listen(8080);
     console.log('works!');
