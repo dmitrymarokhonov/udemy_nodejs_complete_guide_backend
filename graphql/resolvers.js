@@ -101,13 +101,34 @@ module.exports = {
       creator: user
     });
     const createdPost = await post.save();
-    // Add post to user's posts
     user.posts.push(createdPost);
+    await user.save();
+
     return {
       ...createdPost._doc,
       _id: createdPost._id.toString(),
       createdAt: createdPost.createdAt.toISOString(),
       updatedAt: createdPost.updatedAt.toISOString()
+    };
+  },
+  async posts(args, req) {
+    if (!req.isAuth) {
+      const error = new Error('Not authenticated!');
+      error.code = 401;
+      throw error;
+    }
+    const totalPosts = await Post.find().countDocuments();
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .populate('creator');
+    return {
+      posts: posts.map((p) => ({
+        ...p._doc,
+        _id: p._id.toString(),
+        createdAt: p.createdAt.toISOString(),
+        updatedAt: p.updatedAt.toISOString()
+      })),
+      totalPosts
     };
   }
 };
