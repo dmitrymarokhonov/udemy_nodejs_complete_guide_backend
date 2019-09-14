@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -15,6 +16,12 @@ const auth = require('./middleware/auth');
 process.conf = {
   jwtSecret: 'YHDs~44N:?!bLzH5',
   mongoServer: 'mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/messages'
+};
+
+const clearImage = (paramFilePath) => {
+  let filePath = paramFilePath;
+  filePath = path.join(__dirname, '..', filePath);
+  fs.unlink(filePath, (err) => console.log(`${err}`));
 };
 
 const app = express();
@@ -54,10 +61,24 @@ app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
-  next();
+  return next();
 });
 
 app.use(auth);
+
+app.put('/post-image', (req, res, next) => {
+  if (!req.isAuth) {
+    throw new Error('Noth authenticated!');
+  }
+  if (!req.file) {
+    return res.status(200).json({ message: 'No file provided!' });
+  }
+  if (req.body.oldPath) {
+    clearImage(req.body.oldPath);
+  }
+  return res.status(200).json({ message: 'File stored.', filePath: req.file.path });
+});
+
 
 app.use('/graphql', graphqlHttp({
   schema: graphqlSchema,
