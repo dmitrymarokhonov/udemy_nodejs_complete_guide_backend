@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -9,6 +8,7 @@ const graphqlHttp = require('express-graphql');
 
 const cookieParser = require('cookie-parser');
 
+const { clearImage } = require('./util/file');
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
 const auth = require('./middleware/auth');
@@ -18,11 +18,6 @@ process.conf = {
   mongoServer: 'mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/messages'
 };
 
-const clearImage = (paramFilePath) => {
-  let filePath = paramFilePath;
-  filePath = path.join(__dirname, '..', filePath);
-  fs.unlink(filePath, (err) => console.log(`${err}`));
-};
 
 const app = express();
 
