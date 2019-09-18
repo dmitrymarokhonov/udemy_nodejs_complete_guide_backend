@@ -39,7 +39,7 @@ exports.getPosts = async (req, res, next) => {
 exports.createPost = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, enetered data is incorrect.');
+    const error = new Error('Validation failed, entered data is incorrect.');
     error.statusCode = 422;
     throw error;
   }
@@ -48,38 +48,26 @@ exports.createPost = async (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-
+  const imageUrl = req.file.path;
   const { title } = req.body;
   const { content } = req.body;
-  const imageUrl = req.file.path;
   const post = new Post({
     title,
     content,
     imageUrl,
-    creator: req.userId.userId
+    creator: req.userId
   });
-
   try {
     await post.save();
-    const creator = await User.findById(req.userId.userId);
-    await creator.posts.push(post);
-    await creator.save();
-    io.getIo().emit('posts', {
-      action: 'create',
-      post: {
-        ...post._doc,
-        creator: {
-          _id: req.userId,
-          name: creator.name
-        }
-      }
-    });
-
+    const user = await User.findById(req.userId);
+    user.posts.push(post);
+    const savedUser = await user.save();
     res.status(201).json({
       message: 'Post created successfully!',
       post,
-      creator: { _id: creator._id, name: creator.name }
+      creator: { _id: user._id, name: user.name }
     });
+    return savedUser;
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
