@@ -72,7 +72,7 @@ exports.login = async (req, res, next) => {
 
 exports.getUserStatus = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userId.userId);
+    const user = await User.findById(req.userId);
     if (!user) {
       const error = new Error('Use not found.');
       error.statusCode = 404;
@@ -83,7 +83,7 @@ exports.getUserStatus = async (req, res, next) => {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
-    next();
+    next(err);
   }
 };
 

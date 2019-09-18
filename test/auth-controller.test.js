@@ -3,9 +3,34 @@ const sinon = require('sinon');
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
-const AuthContoller = require('../controllers/auth');
+const AuthController = require('../controllers/auth');
 
 describe('Auth Controller - Login', () => {
+  before((done) => {
+    mongoose
+      .connect(
+        'mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/test-messages',
+        { useNewUrlParser: true }
+      )
+      .then(result => {
+        const user = new User({
+          email: 'test@test.com',
+          password: 'privet',
+          name: 'Test',
+          posts: [],
+          _id: '5c0f66b979af55031b34728a'
+        });
+        return user.save();
+      })
+      .then(() => {
+        done();
+      });
+  });
+
+  beforeEach(() => {});
+
+  afterEach(() => {});
+
   it('Should throw an error with code 500 if accessing the database failes', (done) => {
     sinon.stub(User, 'findOne');
     User.findOne.throws();
@@ -13,10 +38,10 @@ describe('Auth Controller - Login', () => {
     const req = {
       body: {
         email: 'test@test.com',
-        password: 'test'
+        password: 'privet'
       }
     };
-    AuthContoller.login(req, {}, () => {}).then((result) => {
+    AuthController.login(req, {}, () => {}).then(result => {
       // Chai is capable of detecting types of data and 'error' is one of the types
       // https://www.chaijs.com/api/bdd/#method_language-chains
       expect(result).to.be.an('error');
@@ -27,36 +52,30 @@ describe('Auth Controller - Login', () => {
   });
 
   it('should send a response with a valid user status for an existing user', (done) => {
-    mongoose.connect('mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/test-messages', { useNewUrlParser: true })
-      .then((result) => {
-        const user = new User({
-          email: 'test2@test.com',
-          password: 'tester',
-          name: 'Test',
-          posts: [],
-          _id: '5d7e974721babe0443566531'
-        });
-        return user.save();
-      })
+    const req = { userId: '5c0f66b979af55031b34728a' };
+    const res = {
+      statusCode: 500,
+      userStatus: null,
+      status(code) {
+        this.statusCode = code;
+        return this;
+      },
+      json(data) {
+        this.userStatus = data.status;
+      }
+    };
+    AuthController.getUserStatus(req, res, () => {}).then(() => {
+      expect(res.statusCode).to.be.equal(200);
+      expect(res.userStatus).to.be.equal('I am new!');
+      done();
+    });
+  });
+
+  after((done) => {
+    User.deleteMany({})
+      .then(() => mongoose.disconnect())
       .then(() => {
-        const req = { userId: '5d7e974721babe0443566531' };
-        const res = {
-          statusCode: 500,
-          userStatus: null,
-          status: (code) => {
-            this.statusCode = code;
-            return this;
-          },
-          json: (data) => {
-            this.userStatus = data.status;
-          }
-        };
-        AuthContoller.getUserStatus(req, res, () => {}).then(() => {
-          expect(res.statusCode).to.be.equal(200);
-          expect(res.status).to.be.equal('I am new!');
-          done();
-        });
-      })
-      .catch((err) => console.log(err));
+        done();
+      });
   });
 });

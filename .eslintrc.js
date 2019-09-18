@@ -23,6 +23,7 @@ module.exports = {
     "comma-dangle": "off",
     "no-undef": "off",
     "consistent-return": "off",
+    "arrow-parens": "off",
     "no-unused-expressions": "off"
   },
   plugins: [
