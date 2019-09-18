@@ -21,7 +21,8 @@ module.exports = {
     "no-unused-vars": "off",
     "global-require": "off",
     "comma-dangle": "off",
-    "no-undef": "off"
+    "no-undef": "off",
+    "consistent-return": "off"
   },
   plugins: [
     "mocha"
