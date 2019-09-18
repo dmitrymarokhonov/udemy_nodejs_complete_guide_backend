@@ -60,11 +60,13 @@ exports.login = async (req, res, next) => {
 
     console.log(token);
     res.status(200).json({ token, userId: loadedUser._id.toString() });
+    return;
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
-    next();
+    next(err);
+    return err;
   }
 };
 
