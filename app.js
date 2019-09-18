@@ -29,8 +29,9 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
-
-const MONGODB_URI = 'mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/messages';
+process.conf = {
+  mongoURI: 'mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net'
+};
 
 app.use(cors());
 app.use(cookieParser('some_secret_1234'));
@@ -57,7 +58,7 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message, data });
 });
 
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true })
+mongoose.connect(`${process.conf.mongoURI}/messages`, { useNewUrlParser: true })
   .then(() => {
     console.log('works!');
     app.listen(8080);
