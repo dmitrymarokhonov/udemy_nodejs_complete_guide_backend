@@ -22,7 +22,8 @@ module.exports = {
     "global-require": "off",
     "comma-dangle": "off",
     "no-undef": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "no-unused-expressions": "off"
   },
   plugins: [
     "mocha"

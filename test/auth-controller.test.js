@@ -27,18 +27,35 @@ describe('Auth Controller - Login', () => {
   });
 
   it('should send a response with a valid user status for an existing user', (done) => {
-    mongoose.connect(`${process.conf.mongoURI}/test-messages`, { useNewUrlParser: true })
+    mongoose.connect('mongodb+srv://dmitry:OvOTvIZHoxySg5PN@cluster0-qvwe4.mongodb.net/test-messages', { useNewUrlParser: true })
       .then((result) => {
         const user = new User({
-          email: 'test@test.com',
+          email: 'test2@test.com',
           password: 'tester',
           name: 'Test',
-          posts: []
+          posts: [],
+          _id: '5d7e974721babe0443566531'
         });
         return user.save();
       })
       .then(() => {
-          
+        const req = { userId: '5d7e974721babe0443566531' };
+        const res = {
+          statusCode: 500,
+          userStatus: null,
+          status: (code) => {
+            this.statusCode = code;
+            return this;
+          },
+          json: (data) => {
+            this.userStatus = data.status;
+          }
+        };
+        AuthContoller.getUserStatus(req, res, () => {}).then(() => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.status).to.be.equal('I am new!');
+          done();
+        });
       })
       .catch((err) => console.log(err));
   });
