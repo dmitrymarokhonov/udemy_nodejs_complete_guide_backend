@@ -16,4 +16,20 @@ describe('Auth middleware', () => {
     };
     expect(authMiddleware.bind(this, req, {}, () => {})).to.throw();
   });
+
+  it('should yield a user after decoding the token', () => {
+    const req = {
+      get: (headerName) => 'Bearer asdfasdukasaGGHFL'
+    };
+    authMiddleware(req, {}, () => {});
+    expect(req).to.have.property('userid');
+    // expect(authMiddleware.bind(this, req, {}, () => {})).to.throw();
+  });
+
+  it('should throw an error if the token cannot be verified', () => {
+    const req = {
+      get: (headerName) => 'Bearer xyz'
+    };
+    expect(authMiddleware.bind(this, req, {}, () => {})).to.throw();
+  });
 });
